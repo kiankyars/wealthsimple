@@ -249,13 +249,18 @@
             const proxyUrl = CORS_PROXY + encodeURIComponent(YAHOO_FINANCE_QUOTE_API);
             const response = await fetch(proxyUrl);
             if (!response.ok) {
-                throw new Error('Failed to fetch DLR.TO data');
+                throw new Error('Failed to fetch DLR.TO data: HTTP ' + response.status);
             }
             const proxyData = await response.json();
+            
+            if (!proxyData.contents) {
+                throw new Error('CORS proxy returned invalid response');
+            }
+            
             const data = JSON.parse(proxyData.contents);
             
             if (!data.quoteResponse || !data.quoteResponse.result || !data.quoteResponse.result[0]) {
-                throw new Error('Invalid DLR.TO data format');
+                throw new Error('Invalid DLR.TO data format. API response structure: ' + JSON.stringify(Object.keys(data || {})));
             }
             
             const quote = data.quoteResponse.result[0];
