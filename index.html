@@ -231,7 +231,7 @@
         // Yahoo Finance API for DLR.TO bid/ask spread via CORS proxy
         const DLR_SYMBOL = 'DLR.TO';
         const YAHOO_FINANCE_QUOTE_API = `https://query1.finance.yahoo.com/v8/finance/chart/${DLR_SYMBOL}?interval=1m&range=1d&includePrePost=false&events=div%7Csplit%7Cearn&useYfid=true`;
-        const CORS_PROXY = 'https://api.allorigins.win/get?url=';
+        const CORS_PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
         
         async function fetchMarketRate() {
             const response = await fetch(EXCHANGE_RATE_API);
@@ -251,17 +251,21 @@
             if (!response.ok) {
                 throw new Error('Failed to fetch DLR.TO data: HTTP ' + response.status);
             }
-            const proxyData = await response.json();
-            
-            if (!proxyData.contents) {
-                throw new Error('CORS proxy returned invalid response. Response: ' + JSON.stringify(proxyData));
-            }
-            
             let data;
             try {
-                data = JSON.parse(proxyData.contents);
+                const proxyData = await response.json();
+                // Some CORS proxies wrap in 'contents', others return directly
+                if (proxyData.contents) {
+                    data = JSON.parse(proxyData.contents);
+                } else if (proxyData.chart || proxyData.finance) {
+                    // Direct response from proxy
+                    data = proxyData;
+                } else {
+                    throw new Error('Unexpected proxy response format. Keys: ' + JSON.stringify(Object.keys(proxyData)));
+                }
             } catch (e) {
-                throw new Error('CORS proxy returned non-JSON content. First 200 chars: ' + proxyData.contents.substring(0, 200));
+                const text = await response.text();
+                throw new Error('Failed to parse DLR.TO API response. Error: ' + e.message + '. Response preview: ' + text.substring(0, 200));
             }
             
             // Handle different response structures - Yahoo Finance API can return data in different formats
