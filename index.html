@@ -168,16 +168,6 @@
             font-weight: 500;
         }
         
-        .savings {
-            text-align: center;
-            padding: 15px;
-            background: #10b981;
-            color: white;
-            border-radius: 6px;
-            margin-top: 20px;
-            font-weight: 600;
-            font-size: 1.1em;
-        }
         
         .error {
             background: #fee2e2;
@@ -219,7 +209,7 @@
             </div>
             
             <div class="form-group">
-                <label for="wsRate">Wealthsimple Conversion Rate (optional)</label>
+                <label for="wsRate">Wealthsimple Conversion Rate</label>
                 <input type="number" id="wsRate" step="0.0001" placeholder="Leave blank to use market rate">
                 <p class="rate-note">Go to Wealthsimple exchange page (before confirming) to see the current rate. If left blank, we'll use the current market rate.</p>
             </div>
@@ -238,87 +228,70 @@
         // Free exchange rate API (no key required for basic usage)
         const EXCHANGE_RATE_API = 'https://api.exchangerate-api.com/v4/latest/USD';
         
-        // Yahoo Finance API for DLR.TO bid/ask spread (no auth required)
+        // Yahoo Finance API for DLR.TO bid/ask spread via CORS proxy
         const DLR_SYMBOL = 'DLR.TO';
-        const YAHOO_FINANCE_API = `https://query1.finance.yahoo.com/v8/finance/chart/${DLR_SYMBOL}?interval=1d&range=1d`;
-        
-        // Alternative: Alpha Vantage fallback (if Yahoo fails)
-        // Note: Would need API key for production use
+        const YAHOO_FINANCE_QUOTE_API = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${DLR_SYMBOL}`;
+        const CORS_PROXY = 'https://api.allorigins.win/get?url=';
         
         async function fetchMarketRate() {
-            try {
-                const response = await fetch(EXCHANGE_RATE_API);
-                const data = await response.json();
-                return data.rates.CAD;
-            } catch (error) {
-                console.error('Error fetching market rate:', error);
-                // Fallback to approximate rate
-                return 1.35;
+            const response = await fetch(EXCHANGE_RATE_API);
+            if (!response.ok) {
+                throw new Error('Failed to fetch market exchange rate');
             }
+            const data = await response.json();
+            if (!data.rates || !data.rates.CAD) {
+                throw new Error('Invalid exchange rate data');
+            }
+            return data.rates.CAD;
         }
         
         async function fetchDLRSpread() {
-            // Try multiple methods to get DLR.TO data
-            const methods = [
-                // Method 1: Direct Yahoo Finance API
-                async () => {
-                    const response = await fetch(YAHOO_FINANCE_API);
-                    if (!response.ok) throw new Error('Yahoo Finance API failed');
-                    const data = await response.json();
-                    
-                    if (data.chart && data.chart.result && data.chart.result[0]) {
-                        const meta = data.chart.result[0].meta;
-                        const currentPrice = meta.regularMarketPrice || meta.previousClose;
-                        return { price: currentPrice };
-                    }
-                    throw new Error('Invalid data format');
-                },
-                // Method 2: CORS proxy (if needed)
-                async () => {
-                    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(YAHOO_FINANCE_API)}`;
-                    const response = await fetch(proxyUrl);
-                    if (!response.ok) throw new Error('Proxy failed');
-                    const data = await response.json();
-                    const parsed = JSON.parse(data.contents);
-                    
-                    if (parsed.chart && parsed.chart.result && parsed.chart.result[0]) {
-                        const meta = parsed.chart.result[0].meta;
-                        const currentPrice = meta.regularMarketPrice || meta.previousClose;
-                        return { price: currentPrice };
-                    }
-                    throw new Error('Invalid data format');
-                }
-            ];
+            const proxyUrl = CORS_PROXY + encodeURIComponent(YAHOO_FINANCE_QUOTE_API);
+            const response = await fetch(proxyUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch DLR.TO data');
+            }
+            const proxyData = await response.json();
+            const data = JSON.parse(proxyData.contents);
             
-            for (const method of methods) {
-                try {
-                    const result = await method();
-                    // DLR.TO typically has a spread of 0.01-0.02%
-                    // We'll use 0.015% as a reasonable estimate
-                    const estimatedSpreadPercent = 0.015;
-                    return {
-                        price: result.price,
-                        spreadPercent: estimatedSpreadPercent,
-                        bid: result.price * (1 - estimatedSpreadPercent / 200),
-                        ask: result.price * (1 + estimatedSpreadPercent / 200)
-                    };
-                } catch (error) {
-                    console.warn('Method failed, trying next:', error);
-                    continue;
-                }
+            if (!data.quoteResponse || !data.quoteResponse.result || !data.quoteResponse.result[0]) {
+                throw new Error('Invalid DLR.TO data format');
             }
             
-            // Final fallback: use typical DLR.TO values
-            // DLR.TO price is typically close to USD-CAD rate
+            const quote = data.quoteResponse.result[0];
+            const currentPrice = quote.regularMarketPrice;
+            const bid = quote.bid;
+            const ask = quote.ask;
+            
+            if (!currentPrice || currentPrice <= 0) {
+                throw new Error('Could not get DLR.TO price');
+            }
+            
+            if (bid === undefined || bid === null || ask === undefined || ask === null) {
+                throw new Error('Bid/ask prices not available from DLR.TO API');
+            }
+            
+            if (bid <= 0 || ask <= 0 || ask <= bid) {
+                throw new Error('Invalid bid/ask prices from DLR.TO API');
+            }
+            
+            const spreadPercent = ((ask - bid) / bid) * 100;
+            
             return {
-                price: null, // Will be estimated from market rate
-                spreadPercent: 0.015,
-                bid: null,
-                ask: null
+                price: currentPrice,
+                spreadPercent: spreadPercent,
+                bid: bid,
+                ask: ask
             };
         }
         
-        function calculateWealthsimpleFee(amount) {
+        function calculateWealthsimpleFee(amount, direction) {
+            // CAD to USD is always 1.5%
+            if (direction === 'cadToUsd') {
+                return 0.015;
+            }
+            
+            // USD to CAD uses tiered fees
             if (amount >= 100000) {
                 return 0; // 0% fee, entire amount
             } else if (amount >= 25000) {
@@ -372,7 +345,7 @@
                 }
                 
                 // Calculate Wealthsimple conversion
-                const wsFeePercent = calculateWealthsimpleFee(amount);
+                const wsFeePercent = calculateWealthsimpleFee(amount, direction);
                 const wsFee = amount * wsFeePercent;
                 
                 let wsAmountAfterFee, wsFinalAmount, wsCost;
@@ -389,8 +362,6 @@
                 // Calculate Norbert's Gambit cost
                 // Cost is the spread on DLR.TO
                 // For buying and selling, you pay the spread once (buy at ask, sell at bid)
-                // DLR.TO price is approximately equal to USD-CAD rate
-                const dlrPrice = dlrData.price || marketRate;
                 const dlrSpreadCost = amount * (dlrData.spreadPercent / 100);
                 
                 let ngFinalAmount, ngCost;
@@ -403,12 +374,8 @@
                     ngCost = dlrSpreadCost;
                 }
                 
-                // Determine which is better
-                const wsBetter = direction === 'usdToCad' 
-                    ? wsFinalAmount > ngFinalAmount 
-                    : wsFinalAmount > ngFinalAmount;
-                
-                const savings = Math.abs(wsFinalAmount - ngFinalAmount);
+                // Determine which is better (higher final amount is better)
+                const ngBetter = ngFinalAmount > wsFinalAmount;
                 
                 // Display results
                 const resultsDiv = document.getElementById('results');
@@ -416,7 +383,7 @@
                 const targetCurrency = direction === 'usdToCad' ? 'CAD' : 'USD';
                 
                 resultsDiv.innerHTML = `
-                    <div class="comparison-card ${wsBetter ? '' : 'best'}">
+                    <div class="comparison-card ${ngBetter ? '' : 'best'}">
                         <h3>Wealthsimple Conversion</h3>
                         <div class="detail-row">
                             <span class="detail-label">Fee Rate:</span>
@@ -436,21 +403,22 @@
                         </div>
                     </div>
                     
-                    <div class="comparison-card ${wsBetter ? 'best' : ''}">
+                    <div class="comparison-card ${ngBetter ? 'best' : ''}">
                         <h3>Norbert's Gambit (DLR.TO)</h3>
-                        ${dlrData.price ? `
                         <div class="detail-row">
                             <span class="detail-label">DLR.TO Current Price:</span>
                             <span class="detail-value">${formatCurrency(dlrData.price, 'CAD')}</span>
                         </div>
-                        ` : `
                         <div class="detail-row">
-                            <span class="detail-label">DLR.TO Price:</span>
-                            <span class="detail-value">~${marketRate.toFixed(4)} (estimated from market rate)</span>
+                            <span class="detail-label">Bid Price:</span>
+                            <span class="detail-value">${formatCurrency(dlrData.bid, 'CAD')}</span>
                         </div>
-                        `}
                         <div class="detail-row">
-                            <span class="detail-label">Estimated Spread:</span>
+                            <span class="detail-label">Ask Price:</span>
+                            <span class="detail-value">${formatCurrency(dlrData.ask, 'CAD')}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Spread:</span>
                             <span class="detail-value">${formatPercent(dlrData.spreadPercent / 100)}</span>
                         </div>
                         <div class="detail-row">
@@ -465,12 +433,6 @@
                             <span class="detail-label">Final Amount:</span>
                             <span class="detail-value">${formatCurrency(ngFinalAmount, targetCurrency)}</span>
                         </div>
-                    </div>
-                    
-                    <div class="savings">
-                        ${wsBetter 
-                            ? `Wealthsimple is better by ${formatCurrency(savings, targetCurrency)}` 
-                            : `Norbert's Gambit is better by ${formatCurrency(savings, targetCurrency)}`}
                     </div>
                     
                     <div class="info-box">
