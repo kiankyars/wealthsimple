@@ -230,7 +230,7 @@
         
         // Yahoo Finance API for DLR.TO bid/ask spread via CORS proxy
         const DLR_SYMBOL = 'DLR.TO';
-        const YAHOO_FINANCE_QUOTE_API = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${DLR_SYMBOL}`;
+        const YAHOO_FINANCE_QUOTE_API = `https://query1.finance.yahoo.com/v8/finance/chart/${DLR_SYMBOL}?interval=1m&range=1d&includePrePost=false&events=div%7Csplit%7Cearn&useYfid=true`;
         const CORS_PROXY = 'https://api.allorigins.win/get?url=';
         
         async function fetchMarketRate() {
@@ -254,19 +254,53 @@
             const proxyData = await response.json();
             
             if (!proxyData.contents) {
-                throw new Error('CORS proxy returned invalid response');
+                throw new Error('CORS proxy returned invalid response. Response: ' + JSON.stringify(proxyData));
             }
             
-            const data = JSON.parse(proxyData.contents);
-            
-            if (!data.quoteResponse || !data.quoteResponse.result || !data.quoteResponse.result[0]) {
-                throw new Error('Invalid DLR.TO data format. API response structure: ' + JSON.stringify(Object.keys(data || {})));
+            let data;
+            try {
+                data = JSON.parse(proxyData.contents);
+            } catch (e) {
+                throw new Error('CORS proxy returned non-JSON content. First 200 chars: ' + proxyData.contents.substring(0, 200));
             }
             
-            const quote = data.quoteResponse.result[0];
-            const currentPrice = quote.regularMarketPrice;
-            const bid = quote.bid;
-            const ask = quote.ask;
+            // Handle different response structures - Yahoo Finance API can return data in different formats
+            let chartData = null;
+            if (data.finance && data.finance.result && data.finance.result[0]) {
+                chartData = data.finance.result[0];
+            } else if (data.finance && data.finance.chart && data.finance.chart.result && data.finance.chart.result[0]) {
+                chartData = data.finance.chart.result[0];
+            } else if (data.chart && data.chart.result && data.chart.result[0]) {
+                chartData = data.chart.result[0];
+            }
+            
+            if (!chartData) {
+                let structure = 'Unknown structure';
+                if (data.finance) {
+                    if (data.finance.chart) {
+                        structure = 'finance.chart exists';
+                    } else if (data.finance.result) {
+                        structure = 'finance.result exists but empty or invalid';
+                    } else {
+                        structure = 'finance exists but no chart or result. Keys: ' + JSON.stringify(Object.keys(data.finance));
+                    }
+                } else if (data.chart) {
+                    structure = 'chart exists but no result[0]';
+                } else {
+                    structure = 'no finance or chart key';
+                }
+                throw new Error('Invalid DLR.TO data format. ' + structure + '. Top level keys: ' + JSON.stringify(Object.keys(data || {})));
+            }
+            
+            const meta = chartData.meta;
+            
+            if (!meta) {
+                throw new Error('No metadata in DLR.TO response');
+            }
+            
+            const currentPrice = meta.regularMarketPrice;
+            const bid = meta.bid;
+            const ask = meta.ask;
             
             if (!currentPrice || currentPrice <= 0) {
                 throw new Error('Could not get DLR.TO price');
