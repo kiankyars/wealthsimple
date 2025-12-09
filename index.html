@@ -228,10 +228,11 @@
         // Free exchange rate API (no key required for basic usage)
         const EXCHANGE_RATE_API = 'https://api.exchangerate-api.com/v4/latest/USD';
         
-        // Yahoo Finance API for DLR.TO bid/ask spread via CORS proxy
-        const DLR_SYMBOL = 'DLR.TO';
-        const YAHOO_FINANCE_QUOTE_API = `https://query1.finance.yahoo.com/v8/finance/chart/${DLR_SYMBOL}?interval=1m&range=1d&includePrePost=false&events=div%7Csplit%7Cearn&useYfid=true`;
-        const CORS_PROXY = 'https://api.codetabs.com/v1/proxy?quest=';
+        // Alpha Vantage API for DLR.TO price
+        const ALPHA_VANTAGE_API_KEY = 'GSSH8SFKU7YD3F6O';
+        const DLR_SYMBOL_USD_CAD = 'DLR.TO';
+        const DLR_SYMBOL_CAD_USD = 'DLR-U.TO';
+        const DEFAULT_DLR_SPREAD_PERCENT = 0.015; // Typical DLR spread
         
         async function fetchMarketRate() {
             const response = await fetch(EXCHANGE_RATE_API);
@@ -245,84 +246,22 @@
             return data.rates.CAD;
         }
         
-        async function fetchDLRSpread() {
-            const proxyUrl = CORS_PROXY + encodeURIComponent(YAHOO_FINANCE_QUOTE_API);
-            const response = await fetch(proxyUrl);
-            if (!response.ok) {
-                throw new Error('Failed to fetch DLR.TO data: HTTP ' + response.status);
-            }
+        async function fetchDLRSpread(direction) {
+            const symbol = direction === 'usdToCad' ? DLR_SYMBOL_USD_CAD : DLR_SYMBOL_CAD_USD;
+            const apiUrl = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${ALPHA_VANTAGE_API_KEY}`;
             
-            // Read response as text first (can only read body once)
-            const responseText = await response.text();
-            let data;
-            try {
-                const proxyData = JSON.parse(responseText);
-                // Some CORS proxies wrap in 'contents', others return directly
-                if (proxyData.contents) {
-                    data = JSON.parse(proxyData.contents);
-                } else if (proxyData.chart || proxyData.finance) {
-                    // Direct response from proxy
-                    data = proxyData;
-                } else {
-                    throw new Error('Unexpected proxy response format. Keys: ' + JSON.stringify(Object.keys(proxyData)));
-                }
-            } catch (e) {
-                throw new Error('Failed to parse DLR.TO API response. Error: ' + e.message + '. Response preview: ' + responseText.substring(0, 200));
-            }
+            const response = await fetch(apiUrl);
+            const data = await response.json();
             
-            // Handle different response structures - Yahoo Finance API can return data in different formats
-            let chartData = null;
-            if (data.finance && data.finance.result && data.finance.result[0]) {
-                chartData = data.finance.result[0];
-            } else if (data.finance && data.finance.chart && data.finance.chart.result && data.finance.chart.result[0]) {
-                chartData = data.finance.chart.result[0];
-            } else if (data.chart && data.chart.result && data.chart.result[0]) {
-                chartData = data.chart.result[0];
-            }
+            const quote = data['Global Quote'];
+            const currentPrice = parseFloat(quote['05. price']);
             
-            if (!chartData) {
-                let structure = 'Unknown structure';
-                if (data.finance) {
-                    if (data.finance.chart) {
-                        structure = 'finance.chart exists';
-                    } else if (data.finance.result) {
-                        structure = 'finance.result exists but empty or invalid';
-                    } else {
-                        structure = 'finance exists but no chart or result. Keys: ' + JSON.stringify(Object.keys(data.finance));
-                    }
-                } else if (data.chart) {
-                    structure = 'chart exists but no result[0]';
-                } else {
-                    structure = 'no finance or chart key';
-                }
-                throw new Error('Invalid DLR.TO data format. ' + structure + '. Top level keys: ' + JSON.stringify(Object.keys(data || {})));
-            }
-            
-            const meta = chartData.meta;
-            
-            if (!meta) {
-                throw new Error('No metadata in DLR.TO response');
-            }
-            
-            const currentPrice = meta.regularMarketPrice;
-            const bid = meta.bid;
-            const ask = meta.ask;
-            
-            if (!currentPrice || currentPrice <= 0) {
-                throw new Error('Could not get DLR.TO price');
-            }
-            
-            if (bid === undefined || bid === null || ask === undefined || ask === null) {
-                throw new Error('Bid/ask prices not available from DLR.TO API');
-            }
-            
-            if (bid <= 0 || ask <= 0 || ask <= bid) {
-                throw new Error('Invalid bid/ask prices from DLR.TO API');
-            }
-            
-            const spreadPercent = ((ask - bid) / bid) * 100;
+            const spreadPercent = DEFAULT_DLR_SPREAD_PERCENT;
+            const bid = currentPrice * (1 - spreadPercent / 200);
+            const ask = currentPrice * (1 + spreadPercent / 200);
             
             return {
+                symbol: symbol,
                 price: currentPrice,
                 spreadPercent: spreadPercent,
                 bid: bid,
@@ -380,7 +319,7 @@
                 // Fetch market data
                 const [marketRate, dlrData] = await Promise.all([
                     fetchMarketRate(),
-                    fetchDLRSpread()
+                    fetchDLRSpread(direction)
                 ]);
                 
                 const exchangeRate = wsRateInput ? parseFloat(wsRateInput) : marketRate;
@@ -449,9 +388,9 @@
                     </div>
                     
                     <div class="comparison-card ${ngBetter ? 'best' : ''}">
-                        <h3>Norbert's Gambit (DLR.TO)</h3>
+                        <h3>Norbert's Gambit (${dlrData.symbol})</h3>
                         <div class="detail-row">
-                            <span class="detail-label">DLR.TO Current Price:</span>
+                            <span class="detail-label">${dlrData.symbol} Current Price:</span>
                             <span class="detail-value">${formatCurrency(dlrData.price, 'CAD')}</span>
                         </div>
                         <div class="detail-row">
