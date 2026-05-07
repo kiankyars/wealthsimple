@@ -6,8 +6,8 @@ last_updated: 2026-05-06
 sources:
   - /Users/kian/.codex/memories/memory_summary.md
   - /Users/kian/obsidian/agency.md
-  - /Users/kian/obsidian/projection.md
   - /Users/kian/obsidian/commitment-to-one-goal.md
+  - /Users/kian/obsidian/notes/2026-04-18.md  # daily protocol
 confidence: high
 relationship: self
 ---
@@ -31,12 +31,19 @@ Owner of this wiki. Builds and ships AI/agent infrastructure across Judgment Lab
 - **Investing**: corporate investing workflow under [[../projects/investing]]. Recently moved scope to a planning-relevant curated dossier.
 - **Outreach**: Gmail plugin or GWS only when constrained; never Mail.app fallback. See [[../concepts/outreach-protocol]].
 
+## The one bet (locked 2026-04-26 → 30 days)
+
+Per [[../decisions/one-bet-rl-post-training]] and `~/obsidian/agency.md` (2026-04-26): the next 30 days are locked on **post-training / RL environments / RLVR artifact**. This is the bet with the best compounding evidence. Semi-analysis is research input, not a new main business.
+
+See [[../concepts/the-one-bet-rule]] (`~/obsidian/commitment-to-one-goal.md`) for the principle: one primary bet at a time, locked for a real interval, judged by compounding not day-to-day mood, revisited only on schedule.
+
 ## Active focus areas
 
-- [[../projects/parallel-ralph-lab]] / [[../projects/advisor]] — agent harness design
-- [[../projects/rlvrbook]] — manuscript + distribution
-- [[../projects/kiankyars-github-io]] — Jekyll publishing
-- [[../projects/dylan]] — transcript corpus / balados research
+- [[../projects/rlvrbook]] — direct on-bet: manuscript + distribution for RLVR
+- [[../projects/parallel-ralph-lab]] / [[../projects/advisor]] — agent harness work that supports the bet
+- [[../projects/self-improving-swe-bench-pro]] — meta-harness, on-bet
+- [[../projects/kiankyars-github-io]] — Jekyll publishing (technical communication channel)
+- [[../projects/dylan]] — transcript corpus / balados research (research input)
 - [[../orgs/judgment-labs]] — primary work context
 
 ## Stable preferences (extracted from corrections in `~/.codex/memories/`)
@@ -52,11 +59,31 @@ Owner of this wiki. Builds and ships AI/agent infrastructure across Judgment Lab
 - Preserve unrelated local edits unless explicitly authorized.
 - After alias bounces in outreach, public-page lookup before retry. Stop sends after a routing mistake.
 
-## Currently in tension
+## Daily protocol (Kian's known winning configuration)
 
-- Optionality vs compounding. He knows optionality kills compounding (see `~/obsidian/commitment-to-one-goal.md`) but maintains a wide project surface area.
-- Solo agency vs Judgment Labs scope. The agency narrative in `~/obsidian/agency.md` (dated 2026-04-26) prescribes "lock on one bet, delegate admin".
+Per `~/obsidian/agency.md` and `~/obsidian/notes/2026-04-18.md`:
+- Sleep at 21:00
+- Block X / AI-history consumption (the leak Kian named in his own weekly review)
+- Timed deep-work blocks with a scratchpad
+- Morning run is non-negotiable
+- "Comme d'habitude" or pointing at `plan.md` → use the existing day skeleton without rebuilding it
 
-## Not in this profile
+## Operational do-not rules (per agency.md, 2026-04-26)
 
-Daily emotional state, journal content, behavioral logs (sleep, caffeine, attention spirals). Those live in Obsidian and stay there. The agent reads them to ground judgment but does not surface them here.
+- Do not put mom's money or all his money into concentrated semis/LEAPS from a conviction spike. Build the decision system; treat irreversible financial moves as requiring delay, downside analysis, informed consent.
+- Do not spin up an autonomous semi-analysis consulting company (optionality disguised as agency).
+- Do not consume AI history / X "for context" — Kian's own weekly review names it as the leak.
+- Do not keep revisiting Anthropic / OpenAI escape fantasies at work. Ship work with his name under it.
+- Do not let contempt for average people become a worldview.
+
+## Open commitments (rolling, refresh from agency.md)
+
+- Mom's investment situation: written risk memo before any trades
+- Message Axel
+- Pay/delegate property, storage, tax, admin cleanup (doing it himself was the failure mode)
+- Ask Andrew for the Karpathy follow-up
+- Meet one Molly-caliber person per week ([[molly]])
+
+## Not in this profile (deliberately)
+
+Daily emotional state, journal content, behavioral logs (sleep, caffeine, attention spirals, depressive patterns from `~/obsidian/projection.md`). Those live in Obsidian and **stay there**. The agent reads them to ground judgment but does not surface them in this wiki — they would color agent responses unhelpfully. Operational rules above are sufficient for the agent to act well.

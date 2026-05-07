@@ -44,10 +44,13 @@ Flat catalog of every page. Optimized for LLM navigation — one line per page, 
 - [concepts/sub-3-marathon.md](concepts/sub-3-marathon.md) — 4:15/km goal, 100 km/week floor, Strava SoR
 - [concepts/outreach-protocol.md](concepts/outreach-protocol.md) — Gmail/GWS only, never Mail.app; bounce protocol; hard stops
 - [concepts/compile-dont-retrieve.md](concepts/compile-dont-retrieve.md) — the organizing principle; Karpathy's Wiki LLM core
+- [concepts/the-one-bet-rule.md](concepts/the-one-bet-rule.md) — Kian's explicit operating rule on commitment vs optionality
 
 ## decisions/
 
 - [decisions/wiki-architecture.md](decisions/wiki-architecture.md) — this wiki's design choices, alternatives rejected, revisit conditions
+- [decisions/podcast-knowledge-routing.md](decisions/podcast-knowledge-routing.md) — podcast capture stays in Obsidian; durable facts get promoted into the wiki
+- [decisions/one-bet-rl-post-training.md](decisions/one-bet-rl-post-training.md) — 30-day lock on RL post-training / RLVR (decided 2026-04-26, revisit 2026-05-26)
 
 ## _agent/
 

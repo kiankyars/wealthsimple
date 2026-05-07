@@ -1,9 +1,10 @@
 ---
 type: project
 status: active
-last_updated: 2026-05-06
+last_updated: 2026-05-07
 sources:
   - /Users/kian/.codex/memories/MEMORY.md
+  - this conversation
 repo: siri
 cwd: /Users/kian/Developer/siri
 confidence: high
@@ -31,3 +32,4 @@ Voice-driven Obsidian routing system. Thin "agentic audio" layer that takes voic
 ## Boundaries
 
 - Export-only routing vs agent-runner boundaries are deliberate — keep them separate
+- Podcast and reading captures should land in Obsidian first unless later promoted. The wiki ingest step is separate; see [[../decisions/podcast-knowledge-routing]].

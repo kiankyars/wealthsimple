@@ -2,7 +2,7 @@
 type: decision
 decided_on: 2026-05-06
 revisits: 2026-08-06
-last_updated: 2026-05-06
+last_updated: 2026-05-07
 sources:
   - https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
   - this conversation
@@ -51,6 +51,7 @@ Build an **agent-maintained** personal wiki at `/Users/kian/wiki/`, sibling to (
 - Set up launchd plist
 - Set up `/wiki` slash command for on-demand
 - Skim `~/.codex/memories/memory_summary.md` and prune anything that shouldn't propagate
+- Podcast routing is decided in [[podcast-knowledge-routing]]: capture in Obsidian, corpus when needed, wiki distillation only after promotion
 
 ## Revisit conditions
 

@@ -1,10 +1,11 @@
 ---
 type: project
 status: active
-last_updated: 2026-05-06
+last_updated: 2026-05-07
 sources:
   - /Users/kian/.codex/memories/MEMORY.md
   - /Users/kian/obsidian/balados/dylan-patel.md
+  - this conversation
 repo: dylan
 cwd: /Users/kian/Developer/dylan
 confidence: high
@@ -20,6 +21,12 @@ Practical paired shape:
 - `index.json` manifest
 - canonical `transcripts/*.json` with timestamps
 - `transcripts/*.md` as the clean retrieval view
+
+## Generalized podcast pattern
+
+For one-off listening, keep notes in Obsidian. For recurring research input, make a local corpus in this shape, then let the wiki compile only the facts that change entity pages.
+
+See [[../decisions/podcast-knowledge-routing]] for the general routing rule.
 
 ## Operational rules
 
