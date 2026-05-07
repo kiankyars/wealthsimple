@@ -1,0 +1,14 @@
+# Local-only artifacts the agent may produce that should not be tracked
+inbox/*.raw
+inbox/*.eml
+inbox/*.mbox
+inbox/.scratch/
+
+# Future: vector index if we ever add one
+_index/
+*.lance/
+
+# OS / editor
+.DS_Store
+.swp
+*.tmp
