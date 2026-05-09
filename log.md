@@ -1,6 +1,6 @@
 ---
 type: log
-last_updated: 2026-05-07
+last_updated: 2026-05-08
 sources:
   - this conversation
 confidence: high
@@ -13,6 +13,10 @@ Append-only chronological stream of changes. One line per significant event. For
 ---
 
 <!-- agent: append new entries above this line; oldest at bottom -->
+
+## 2026-05-08
+
+- Added Lambert / Interconnects takeaway on Chinese LLM lab culture: the claim is a coordination and incentive-design edge for today's model-building game, not a generic "no ego" claim. ([[concepts/chinese-llm-lab-culture]])
 
 ## 2026-05-07
 

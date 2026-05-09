@@ -45,6 +45,7 @@ Flat catalog of every page. Optimized for LLM navigation — one line per page, 
 - [concepts/outreach-protocol.md](concepts/outreach-protocol.md) — Gmail/GWS only, never Mail.app; bounce protocol; hard stops
 - [concepts/compile-dont-retrieve.md](concepts/compile-dont-retrieve.md) — the organizing principle; Karpathy's Wiki LLM core
 - [concepts/the-one-bet-rule.md](concepts/the-one-bet-rule.md) — Kian's explicit operating rule on commitment vs optionality
+- [concepts/chinese-llm-lab-culture.md](concepts/chinese-llm-lab-culture.md) — Lambert's claim that Chinese labs fit current LLM coordination work unusually well
 
 ## decisions/
 
