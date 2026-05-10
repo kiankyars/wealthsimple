@@ -52,6 +52,7 @@ Flat catalog of every page. Optimized for LLM navigation — one line per page, 
 - [decisions/wiki-architecture.md](decisions/wiki-architecture.md) — this wiki's design choices, alternatives rejected, revisit conditions
 - [decisions/podcast-knowledge-routing.md](decisions/podcast-knowledge-routing.md) — podcast capture stays in Obsidian; durable facts get promoted into the wiki
 - [decisions/one-bet-rl-post-training.md](decisions/one-bet-rl-post-training.md) — 30-day lock on RL post-training / RLVR (decided 2026-04-26, revisit 2026-05-26)
+- [decisions/dylan-corpus-location.md](decisions/dylan-corpus-location.md) — keep raw Dylan transcripts in `/Users/kian/Developer/dylan`, compile takeaways into wiki
 
 ## _agent/
 

@@ -1,11 +1,12 @@
 ---
 type: project
 status: active
-last_updated: 2026-05-07
+last_updated: 2026-05-09
 sources:
   - /Users/kian/.codex/memories/MEMORY.md
   - /Users/kian/obsidian/balados/dylan-patel.md
   - this conversation
+  - /Users/kian/Developer/dylan/transcripts/2026-05-06-ep-011-gpt-5-5-vs-claude-4-7-openai-s-comeback-from-the-brink-tokenomics-semianalysis-weekly-ep011-2026-05-06.md
 repo: dylan
 cwd: /Users/kian/Developer/dylan
 confidence: high
@@ -27,6 +28,17 @@ Practical paired shape:
 For one-off listening, keep notes in Obsidian. For recurring research input, make a local corpus in this shape, then let the wiki compile only the facts that change entity pages.
 
 See [[../decisions/podcast-knowledge-routing]] for the general routing rule.
+
+## SemiAnalysis Weekly Ep. 011 import
+
+Imported 2026-05-06 SemiAnalysis Weekly Ep. 011 into the corpus from podcast audio using local MLX Whisper transcription.
+
+Reference resolutions from the episode:
+- `H126` means **H1 '26**: first half of 2026. The paired phrase was `H225`, meaning H2 '25. It was jokey time-period shorthand, not a chip/model code.
+- `Google two weeks` means Dylan said Google and OpenAI were both expected to release in roughly two weeks from the 2026-05-05 recording, around 2026-05-19. OpenAI was framed as more pre-training + RL; Google as mostly a multimodal swap.
+- `SOE` did not appear as such in the transcript. The closest local reference is `SSM`: state-space model, discussed in a joke about whether a fake-news model might be Mamba/SSM.
+
+See [[../decisions/dylan-corpus-location]] for why the transcript stays in the corpus instead of moving under the wiki.
 
 ## Operational rules
 

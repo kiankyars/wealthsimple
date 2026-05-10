@@ -1,6 +1,6 @@
 ---
 type: log
-last_updated: 2026-05-08
+last_updated: 2026-05-09
 sources:
   - this conversation
 confidence: high
@@ -13,6 +13,10 @@ Append-only chronological stream of changes. One line per significant event. For
 ---
 
 <!-- agent: append new entries above this line; oldest at bottom -->
+
+## 2026-05-09
+
+- Imported SemiAnalysis Weekly Ep. 011 into the Dylan corpus and resolved Kian's three references (`H126`, Google two weeks, `SOE`/`SSM`). Decided not to merge raw Dylan transcripts under the wiki; keep the corpus external and compile takeaways here. ([[projects/dylan]], [[decisions/dylan-corpus-location]])
 
 ## 2026-05-08
 
