@@ -1,31 +1,15 @@
-# wiki
+# Shared agent context
 
-Agent-maintained personal wiki for Kian. Sibling to `~/obsidian/`.
+A tiny, vendor-neutral context layer for Kian's local agents.
 
-This repo is **agent-written**. I don't edit page bodies by hand. I correct the agent via `_agent/corrections.md`, and the agent rewrites.
+The original May 2026 LLM wiki tried to maintain people, projects, organizations, concepts, decisions, indexes, logs, and nightly ingest. It was used for one task, never wired into agent discovery, and became stale. Those files remain in place as retired historical material and in Git history at commit `25c9341`; agents are instructed not to use them as current context.
 
-If you're an agent: read [AGENTS.md](AGENTS.md) first.
+The replacement has three active documents:
 
-If you're a human: read [index.md](index.md) for what's in here, [log.md](log.md) for what changed recently.
+- `AGENTS.md` — when agents may read or write here
+- `context.md` — current cross-project routing and durable preferences
+- `notes.md` — the few unique syntheses preserved from the old wiki
 
-## Why
+Agents discover this repository through the shared `use-agent-context` skill. There is no ingestion daemon, database, generated index, or requirement to file every answer back. If this stays small and occasionally prevents a real mistake, it is working.
 
-Following Karpathy's "Wiki LLM" gist and Farza's worked example (Farzapedia). The system replaces ad-hoc RAG with a persistent, incrementally-maintained wiki the agent compiles from raw sources (Codex/Claude transcripts, Gmail, Calendar, iMessage, Obsidian, git history).
-
-Three Karpathy principles hold here: **explicit** (you can read what the AI thinks it knows), **yours** (local files), **file-over-app** (Unix toolkit works on it).
-
-## How
-
-- **Source of truth**: markdown in git. No DB, no embeddings as source.
-- **Ingest**: scheduled nightly via launchd + on-demand via Claude Code session in this directory.
-- **Retrieve**: ripgrep + LLM rerank. Add LanceDB only when a real query class fails.
-- **Correct**: edit `_agent/corrections.md` directly (or tell the agent in chat — it'll update both the page and corrections).
-
-## Bootstrap sources
-
-This wiki was bootstrapped from:
-- `~/.codex/memories/memory_summary.md` (40KB pre-distilled user profile)
-- `~/.codex/memories/MEMORY.md` (248KB per-repo task summaries)
-- `~/obsidian/people/*.md` (5 hand-curated people notes)
-
-Subsequent updates come from connectors listed in [llms.txt](llms.txt).
+Background: [Karpathy's original X post](https://x.com/karpathy/status/2039805659525644595) and [canonical LLM Wiki gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).

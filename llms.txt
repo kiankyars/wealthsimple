@@ -1,31 +1,11 @@
-# Kian's wiki
+# Kian's shared agent context
 
-> Agent-maintained knowledge base about Kian's people, projects, orgs, concepts, and decisions. Source of truth: the markdown files in this repo. Companion (read-only) to `~/obsidian/` which holds Kian's hand-written daily notes and self-command artifacts.
+Small, cross-agent context store. It is not a general personal wiki.
 
-## Start here
+## Active files
 
-- [AGENTS.md](AGENTS.md): the contract — principles, frontmatter schema, write rules, off-limits
-- [index.md](index.md): flat catalog of every page in the wiki
-- [log.md](log.md): chronological append-only stream of changes
+- [AGENTS.md](AGENTS.md): read and write boundaries
+- [context.md](context.md): current cross-project context and durable preferences
+- [notes.md](notes.md): preserved cross-project syntheses
 
-## Trees
-
-- [people/](people/): one file per person Kian knows or follows closely
-- [projects/](projects/): active and notable projects/repos
-- [orgs/](orgs/): companies, labs, podcasts, vendors
-- [concepts/](concepts/): technical, philosophical, operational ideas
-- [decisions/](decisions/): explicit decisions Kian has made and why
-
-## Agent infrastructure
-
-- [_agent/corrections.md](_agent/corrections.md): accumulated lessons — load into every run prompt
-- [_agent/entity-decisions.md](_agent/entity-decisions.md): alias resolution audit log
-- [_agent/lint.md](_agent/lint.md): the lint spec; run at end of every ingest
-
-## Companion sources (read-only)
-
-- `/Users/kian/obsidian/` — human-written daily notes, plan, projection. The agent reads, never writes.
-- `/Users/kian/.codex/memories/` — Codex's own distilled memory of Kian's work. Bootstrap source.
-- `/Users/kian/.claude/projects/**/*.jsonl` — Claude Code session transcripts.
-- `~/Library/Messages/chat.db` — iMessage SQLite (FDA required).
-- Gmail + Calendar via MCP.
+All other Markdown files in this repository belong to the retired May 2026 entity-wiki experiment. Do not use them as current context.
