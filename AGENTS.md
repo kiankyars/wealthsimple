@@ -2,7 +2,7 @@
 
 This repository holds durable context that is useful across multiple agents and has no better canonical home. It is not a second Obsidian vault, a project encyclopedia, or a transcript archive.
 
-The old `people/`, `projects/`, `orgs/`, `concepts/`, `decisions/`, `_agent/`, `index.md`, `llms.txt`, and `log.md` system is retired historical material. Do not read it for current context or update it.
+The old entity-wiki system was removed from the working tree. It remains recoverable from Git commit `25c9341`; do not recreate or consult it for current context.
 
 ## Read
 

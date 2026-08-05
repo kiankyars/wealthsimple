@@ -2,7 +2,7 @@
 
 A tiny, vendor-neutral context layer for Kian's local agents.
 
-The original May 2026 LLM wiki tried to maintain people, projects, organizations, concepts, decisions, indexes, logs, and nightly ingest. It was used for one task, never wired into agent discovery, and became stale. Those files remain in place as retired historical material and in Git history at commit `25c9341`; agents are instructed not to use them as current context.
+The original May 2026 LLM wiki tried to maintain people, projects, organizations, concepts, decisions, indexes, logs, and nightly ingest. It was used for one task, never wired into agent discovery, and became stale. That system was removed from the working tree and remains recoverable from Git commit `25c9341`.
 
 The replacement has three active documents:
 
