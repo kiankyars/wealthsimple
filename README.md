@@ -32,6 +32,37 @@ Only **GRADIENT FLOW** is printed "#1 / Start here" → region 1.
 | 5 | FORWARD PASS | 8 | **20** (r7c3) |
 | 6 | GRADIENT ACCUMULATION | 20 → blank col-7 sum | **9** (r1c7) — final, does not export |
 
+## The ordering, proved by exhaustive search
+
+`prove_ordering.py` fixes region 1 (printed "#1 / Start here") and region 6 (the only red
+circle) and tries all **4! = 24** orderings of the middle four, checking each against what
+every sheet will actually accept and produce. **Exactly one of the 24 survives** — the one
+above. Each sheet's acceptance set, computed from its own solver:
+
+| Region | will accept as import | then exports |
+|---|---|---|
+| RESIDUAL CONNECTION | **5** or 6 (nothing else gives a unique path) | 18, or 4 |
+| DUAL PARAMETER SPACE | any legal `ab` value in its grid — 18 among them | 7 |
+| CHAR TENSOR | only **3, 7, 19** (= C, G, S — the only letters that pin the orientation) | 8, 12, 18 or 20 |
+| FORWARD PASS | anything that separates its two paths | 20 or 22 |
+| GRADIENT ACCUMULATION | only **20** or **22** | 9 — final |
+
+The chain of eliminations that leaves one ordering:
+
+* Nothing in the puzzle produces 5 or 6 except region 1, and RESIDUAL CONNECTION accepts
+  nothing else → it must be **region 2**, and exports 18.
+* FORWARD PASS cannot be region 3: it would export 20 or 22, and neither DUAL PARAMETER
+  SPACE (`20`, `22` are not legal cells) nor CHAR TENSOR (accepts only 3, 7, 19) could take
+  it → region 3 is **DUAL PARAMETER SPACE**, exporting 7.
+* FORWARD PASS cannot be region 4 either, for the same reason — CHAR TENSOR could not accept
+  its 20 or 22 → region 4 is **CHAR TENSOR**, region 5 is **FORWARD PASS**.
+* No invariant of FORWARD PASS's two paths equals 7, which independently rules it out of
+  slot 4 (`fp_invariants.py`).
+
+Eight chains remain overall — CHAR TENSOR's export depends on which cell the G lands in
+(8, 12, 18 or 20) and FORWARD PASS's on which of its two paths is intended (20 or 22). **All
+eight end at 9.**
+
 ## How the ordering is forced
 
 * **Region 1** is printed on the sheet ("#1", "Start here"). Its grid is uniquely
@@ -124,6 +155,8 @@ REGION 5  FORWARD PASS                 REGION 6  GRADIENT ACCUMULATION
 | `ga_robustness.py` | region 6 re-derived by a second algorithm; every possible extra fact swept |
 | `ga_critical_cells.py` | the only six cells whose printing could change the answer |
 | `independent_checks.py` | all three path puzzles re-solved searching from the far end |
+| `fp_invariants.py` | 108 candidate invariants of region 5's two paths; which could be its import |
+| `prove_ordering.py` | brute-forces all 24 orderings of regions 2-5; exactly one survives |
 | `dump_solutions.py` | prints all six solved grids |
 
 ## Confidence in region 6 (the sheet the annotations were least sure about)
