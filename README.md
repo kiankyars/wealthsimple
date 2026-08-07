@@ -121,7 +121,50 @@ REGION 5  FORWARD PASS                 REGION 6  GRADIENT ACCUMULATION
 | `ga_example_check.py` | proves the rule set against the printed example |
 | `verify_chain.py` | walks the whole chain end to end |
 | `verify_final_grid.py` | independent re-check of the region 6 answer grid |
+| `ga_robustness.py` | region 6 re-derived by a second algorithm; every possible extra fact swept |
+| `ga_critical_cells.py` | the only six cells whose printing could change the answer |
+| `independent_checks.py` | all three path puzzles re-solved searching from the far end |
 | `dump_solutions.py` | prints all six solved grids |
+
+## Confidence in region 6 (the sheet the annotations were least sure about)
+
+Two solvers using completely different algorithms — one column-wise with bitmask row
+tracking, one enumerating rows 1 and 4 then pairing rows 2/3 column by column — return the
+**same 3 grids** from the printed data (`ga_robustness.py`):
+
+| grid | r1c7 | blank totals |
+|---|---|---|
+| A | **9** | col3 = 18, col7 = 24 — *this is the pencil grid on the sheet* |
+| B | **9** | col3 = 22, col7 = 20 — *the one the import selects* |
+| C | 8 | col3 = 18, col7 = 24 |
+
+Three things make **9** safe:
+
+1. The pencil grid on the sheet is genuinely valid — it satisfies every printed cell, every
+   printed total, the row permutations and the king rule. It just isn't the *only* grid that
+   does. It reads **9**.
+2. Grid C is the only one reading 8, and it shares its blank totals (18 / 24) with grid A —
+   so **no column-total import can ever isolate it**. An import of 18 leaves 8 and 9 both
+   open; only 22 (col 3) or 20 (col 7) give a unique grid, and both give grid B → **9**.
+3. Forcing 8 would need a *printed cell* given at one of exactly six positions —
+   r1c5 = 9, r1c7 = 8, r2c5 = 1, r2c6 = 2, r4c6 = 3, r4c7 = 4 (`ga_critical_cells.py`).
+   Every one of those cells was re-examined at maximum magnification against a
+   printed-ink-only threshold: all six are graphite, none is printed. The only machine-set
+   digits anywhere near them are the `6`s at r1c6 and r4c5, and r1c7 holds nothing but the
+   printed red ring.
+
+So the answer is 9 whether you trust the pencil grid or the uniquely-forced one — and the
+one reading 8 is unreachable.
+
+### Independent reverse-direction checks
+
+`independent_checks.py` re-solves the three path puzzles searching from the far end with a
+different move order and different pruning:
+
+* GRADIENT FLOW numbered 25 → 1: **1** solution, identical grid, circle = 5
+* RESIDUAL CONNECTION from FINISH → START: 34 solutions across all (blank, value) pairs,
+  matching the forward search exactly; import 5 gives the same single path, 9th square = 18
+* FORWARD PASS from END → START: the **same 3** paths, 2 with a number at the circle, values {20, 22}
 
 ## One loose end (does not affect the answer)
 
