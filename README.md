@@ -1,4 +1,4 @@
-# Jane Street "Traverse the Parameter Space" — solved
+# Jane Street "Traverse the Parameter Space"
 
 Six ML-themed grid puzzles on punch-card sheets, plus a purple cover sheet.
 
@@ -9,7 +9,18 @@ Six ML-themed grid puzzles on punch-card sheets, plus a purple cover sheet.
 > … Solving one region will give you information needed for the next.
 > *(Final circled number does not export.)*
 
-## FINAL ANSWER: **9**
+## Status
+
+**The six grids are solved and verified. The final circled parameter is 9 — but that is not
+what the kiosk accepts.** The submission page at
+[parameterspace.wondermakr.com/en/answer](https://parameterspace.wondermakr.com/en/answer)
+takes *text* (max 25 chars) under the heading:
+
+> Use this phrase to arrive at your final answer:
+> **Voyages Nearing Zero Descend**
+
+So the six circled parameters — **5, 18, 7, 8, 20, 9** — feed one more decoding step, which
+is still open. See [The final decode](#the-final-decode) at the end.
 
 ## Mechanics
 
@@ -30,7 +41,7 @@ Only **GRADIENT FLOW** is printed "#1 / Start here" → region 1.
 | 3 | DUAL PARAMETER SPACE | 18 → cell r1c4 | **07** (r4c1) → 7 |
 | 4 | CHAR TENSOR | 7 = **G** (A=1…Z=26) | **h** (r2c4) → 8 |
 | 5 | FORWARD PASS | 8 | **20** (r7c3) |
-| 6 | GRADIENT ACCUMULATION | 20 → blank col-7 sum | **9** (r1c7) — final, does not export |
+| 6 | GRADIENT ACCUMULATION | 20 → blank col-7 sum | **9** (r1c7) — final parameter, does not export |
 
 ## The ordering, proved by exhaustive search
 
@@ -124,7 +135,7 @@ REGION 2  RESIDUAL CONNECTION          REGION 4  CHAR TENSOR
                                          ("<" = entered reversed)
 
 REGION 5  FORWARD PASS                 REGION 6  GRADIENT ACCUMULATION
-  .  .  .  9  8  7  .  .  .              5  3  1  7  8  6 (9) 4  2   <- FINAL ANSWER 9
+  .  .  .  9  8  7  .  .  .              5  3  1  7  8  6 (9) 4  2   <- final parameter 9
  13 12 11 10  .  6  .  .  .              8  6  9  5  2  4  3  7  1
  14  .  .  .  .  5  .  . STA             1  4  7  3  9  8  5  2  6
  15  .  .  .  .  4  3  2  1              9  2  5  4  6  1  3  8  7
@@ -158,6 +169,16 @@ REGION 5  FORWARD PASS                 REGION 6  GRADIENT ACCUMULATION
 | `fp_invariants.py` | 108 candidate invariants of region 5's two paths; which could be its import |
 | `prove_ordering.py` | brute-forces all 24 orderings of regions 2-5; exactly one survives |
 | `dump_solutions.py` | prints all six solved grids |
+| `decode_phrase.py` | tries every extraction scheme against the kiosk phrase |
+| `solve_phrase.py` | anchors on the two certain parameters and hunts spellable words |
+
+`decode_phrase.py` and `solve_phrase.py` need a word list at `/tmp/words.txt`:
+
+```sh
+pip install english-words
+python3 -c "from english_words import get_english_words_set as g; \
+open('/tmp/words.txt','w').write('\n'.join(sorted(g(['web2'], lower=True))))"
+```
 
 ## Confidence in region 6 (the sheet the annotations were least sure about)
 
@@ -210,3 +231,41 @@ chain, so the import mechanism there stays unidentified.
 
 It does not matter: **20** lands in region 6's blank col-7 sum and **22** in its blank col-3
 sum, and *both* pick out the same region 6 grid — whose red-circled cell is **9**.
+
+## The final decode
+
+The kiosk is a physical installation: idle attract video → tap → `/en/answer` →
+`POST /en/ajax {command: check_answer}` → correct/incorrect → prize link. Validation is
+server-side, so there is no answer to read out of the client.
+
+The phrase is **"Voyages Nearing Zero Descend"** — 4 words, **25 letters**, and the input's
+`maxlength` is exactly 25.
+
+Ruled out, with reasons:
+
+* **The parameters are not letter-positions in the phrase.** Regions 1–3 are certain
+  (5, 18, 7), forcing the first three letters to `g o s` (1-based), `e D N` (0-based) or
+  `g e s` (counting spaces). Nothing continues any of those given the constrained values for
+  regions 4–6 — `gosh` is the only candidate and the phrase has no **h**.
+* **The answer is not spelled from the phrase's letters at all** — it contains no **H** and
+  no **T**, so EIGHT, RIGHT, HEIGHT, DESCENT and GRADIENT are unspellable from it.
+* **A=1…Z=26** on the six parameters gives **E R G H T I**. No 6-letter anagram exists; the
+  5-letter subsets are EIGHT, RIGHT, TIGER, THEIR, GIRTH, GRITH, TIGRE, ITHER.
+
+About 50 candidates were checked against the site's own endpoint — every ordering and
+separator of the six numbers, all the anagram words above, ascending/descending readings of
+"Nearing Zero Descend" as sort instructions, sums, the initials `VNZD`, and thematic words
+(converge, convergence, gradient descent, global minimum, parameter space, landing, height,
+descent, minimum, altitude, …). All rejected.
+
+**Most likely missing piece: the punch-hole strips.** Every sheet carries a strip of
+fixed-pitch positions along one edge, each either physically **cut**, printed as a **pale
+square**, plain, or the printed **circle** (red on GRADIENT ACCUMULATION, white elsewhere,
+at a different position on each sheet). That is a Cardan grille, and it is the only decoder
+on the cards that none of the grid puzzles uses.
+
+Testable prediction: **stack the six sheets in the solved order** — GRADIENT FLOW, RESIDUAL
+CONNECTION, DUAL PARAMETER SPACE, CHAR TENSOR, FORWARD PASS, GRADIENT ACCUMULATION — and see
+which strip positions stay open through all six, then read those positions off the 25-letter
+phrase. The strip pitch measures ~20–25 positions, consistent with a 25-letter phrase, but
+the available photographs are too oblique to classify each position reliably.
