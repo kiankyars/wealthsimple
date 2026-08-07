@@ -147,6 +147,11 @@ REGION 5  FORWARD PASS                 REGION 6  GRADIENT ACCUMULATION
       (20) = export
 ```
 
+## Photos
+
+Source photographs of all six sheets, the purple cover sleeve, and the six cards stacked so
+the punch-hole strip can be seen through, are in `photos/`.
+
 ## Scripts
 
 | file | what it does |
@@ -258,14 +263,34 @@ separator of the six numbers, all the anagram words above, ascending/descending 
 (converge, convergence, gradient descent, global minimum, parameter space, landing, height,
 descent, minimum, altitude, …). All rejected.
 
-**Most likely missing piece: the punch-hole strips.** Every sheet carries a strip of
-fixed-pitch positions along one edge, each either physically **cut**, printed as a **pale
-square**, plain, or the printed **circle** (red on GRADIENT ACCUMULATION, white elsewhere,
-at a different position on each sheet). That is a Cardan grille, and it is the only decoder
-on the cards that none of the grid puzzles uses.
+### The punch-hole strips — a real decoder, partly read
 
-Testable prediction: **stack the six sheets in the solved order** — GRADIENT FLOW, RESIDUAL
-CONNECTION, DUAL PARAMETER SPACE, CHAR TENSOR, FORWARD PASS, GRADIENT ACCUMULATION — and see
-which strip positions stay open through all six, then read those positions off the 25-letter
-phrase. The strip pitch measures ~20–25 positions, consistent with a 25-letter phrase, but
-the available photographs are too oblique to classify each position reliably.
+Every sheet carries a strip of fixed-pitch positions along one edge. Each position is either
+physically **cut**, printed as a pale **cream square**, plain paper, or the printed
+**circle** (red on GRADIENT ACCUMULATION, white on the others, at a different position on
+each sheet). This is a Cardan grille and it is the only device on the cards that none of the
+grid puzzles uses.
+
+What the stacked photo (`photos/07-cards-stacked-strip.jpg`) establishes:
+
+* **GRADIENT FLOW (region 1) is almost entirely cuts** — four wide slots, no printed squares
+  of its own. It is the viewing window, which is consistent with it being the sheet you start
+  from.
+* Looking through it at the stack, each unit position shows one of: a recessed **cream
+  square** from a lower sheet, plain **grey** from a lower sheet, a nested **cut edge**
+  (deeper sheets also cut), or — at one position — an unmistakable **red arc**. That red arc
+  is GRADIENT ACCUMULATION's printed circle, i.e. a position where sheets 1–5 are all cut and
+  the bottom sheet shows its red mark. It is almost certainly the registration mark that
+  tells you where the strip aligns.
+
+So the intended final step is very likely: stack in the solved order, use the red circle to
+register the strip, and read the positions that show through as indices into the 25-letter
+phrase.
+
+**Why this could not be finished from photographs.** The reading depends on classifying every
+unit position of a six-deep paper stack, and a single oblique phone photo cannot do that —
+cut edges, printed squares and shadowed grey all render similarly at a glance, and the strip
+pitch (~20–25 positions) cannot be registered to the phrase without a straight-on, flat view.
+Finishing it needs either a flat scan of the stack's strip, or the six strips photographed
+individually face-on so each sheet's cut/print pattern can be tabulated and the stack
+computed rather than observed.
