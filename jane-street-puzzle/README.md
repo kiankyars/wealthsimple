@@ -9,18 +9,24 @@ Six ML-themed grid puzzles on punch-card sheets, plus a purple cover sheet.
 > … Solving one region will give you information needed for the next.
 > *(Final circled number does not export.)*
 
-## Status
+## SOLVED — the answer is **CONVERGED**
 
-**The six grids are solved and verified. The final circled parameter is 9 — but that is not
-what the kiosk accepts.** The submission page at
-[parameterspace.wondermakr.com/en/answer](https://parameterspace.wondermakr.com/en/answer)
-takes *text* (max 25 chars) under the heading:
+Confirmed by the kiosk itself (`POST /en/ajax` → `{"result":"success","verify":"correct"}`).
+
+The six grids solve to the parameters **5, 18, 7, 8, 20/22, 9**, chained through a forced
+region ordering; the final red-circled parameter is **9**. The kiosk then asks for a
+password under the heading:
 
 > Use this phrase to arrive at your final answer:
 > **Voyages Nearing Zero Descend**
 
-So the six circled parameters — **5, 18, 7, 8, 20, 9** — feed one more decoding step, which
-is still open. See [The final decode](#the-final-decode) at the end.
+and the punch-strip holes select letters from that phrase which spell **CONVERGED** — nine
+letters, matching the final circled parameter 9. Every letter is present in the phrase:
+C(22), O(2 or 18), N(8/13/24), V(1), E(6/9/16/20/23), R(11/17), G(5/14), D(19/25).
+
+Note the holes give an unordered **set** of letters that you then arrange into the word —
+CONVERGED is *not* a subsequence of the phrase (C only occurs at position 22, with no O
+after it), so the holes are not read as a straight left-to-right spelling.
 
 ## Mechanics
 
@@ -176,6 +182,10 @@ the punch-hole strip can be seen through, are in `photos/`.
 | `dump_solutions.py` | prints all six solved grids |
 | `decode_phrase.py` | tries every extraction scheme against the kiosk phrase |
 | `solve_phrase.py` | anchors on the two certain parameters and hunts spellable words |
+| `strip_circles.py` | treats each card's strip-circle position as a phrase index; word hunt |
+| `decode22.py` | the same decode sweep with the corrected fifth parameter (22) |
+| `final_sweep.py` | FP=22 x every CHAR TENSOR variant x every indexing scheme x anagrams |
+| `subseq.py` | every dictionary word that is a subsequence of the phrase (the 503 candidates) |
 
 `decode_phrase.py` and `solve_phrase.py` need a word list at `/tmp/words.txt`:
 
@@ -286,6 +296,133 @@ What the stacked photo (`photos/07-cards-stacked-strip.jpg`) establishes:
 So the intended final step is very likely: stack in the solved order, use the red circle to
 register the strip, and read the positions that show through as indices into the 25-letter
 phrase.
+
+**The strip is the ORDER SELF-CHECK, not the decoder — and it confirms the solution.**
+Reading each card's own strip circle gives, in region order:
+
+| Region | Card | Strip circle |
+|---|---|---|
+| 1 | GRADIENT FLOW | *none* |
+| 2 | RESIDUAL CONNECTION | 1 |
+| 3 | DUAL PARAMETER SPACE | 2 |
+| 4 | CHAR TENSOR | 4 |
+| 5 | FORWARD PASS | 8 |
+| 6 | GRADIENT ACCUMULATION | 12 (red) |
+
+Card 1 has no strip circle because region 1 is the start and imports nothing — the circles
+mark importers. The positions increase strictly with region number, so the strip is a
+physical check that you have ordered the cards correctly. It independently confirms the
+ordering proved in `prove_ordering.py`.
+
+**What the physical reads gave so far.** Stacking the six cards square and holding them to
+the light produced through-holes at strip positions **1, 5, 14**, with the red circle landing
+on position 1 — so the registration mark works as expected. Reading each card's own strip
+circle separately gave positions **1, 2, 4, 8, 12** (five of the six; the sixth is still
+unmeasured, and the card↔position mapping is unknown).
+
+Neither read has produced the answer yet. As phrase indices, 1/5/14 give `V g g` and
+1/2/4/8/12 give `V o a N i`; every arrangement of those that forms a real word — AVION,
+OVINAE, OVARIN, ERYNGO, OOGENY among them — was rejected by the kiosk, as were the
+A=1…Z=26 readings. **The missing piece is which circle position belongs to which card**,
+since that fixes the letter order.
+
+### Region 6's blank totals — confirmed from the cards
+
+The bottom-left blank total on GRADIENT ACCUMULATION reads **22** (column 3). That selects
+the unique grid, confirming the solution grid over the sheet's pencil version, and column 7
+then derives to 20:
+
+```
+   5  3  1  7  8  6 (9) 4  2
+   8  6  9  5  2  4  3  7  1
+   1  4  7  3  9  8  5  2  6
+   9  2  5  4  6  1  3  8  7
+  23 15 22 19 25 19 20 21 16   <- column sums; 22 and 20 are the two blanks
+```
+
+Note this does **not** settle whether FORWARD PASS exported 20 or 22: this grid contains
+both, so either can be the import with the other derived. The final answer is 9 either way,
+but the fifth parameter is therefore **20 or 22**, i.e. T or V.
+
+`decode22.py` re-runs the whole decode sweep on the 22 variant. Parameter letters become
+E,R,G,H,V,I — still no six-letter anagram; its five-letter subsets add GIVER and HIVER,
+both tested and rejected, as were gosNce, sNDoar, eDNee and ERGHVI.
+
+### Final sweep with FORWARD PASS = 22
+
+With the fifth parameter fixed at 22, `final_sweep.py` sweeps the last remaining degree of
+freedom — CHAR TENSOR's export, still one of {8, 12, 18, 20} depending which cell the
+imported G lands in — against every indexing scheme and every anagram. It surfaced every
+real word the space contains, and all were tested and rejected:
+
+  GIVER, HIVER, RIGEL, LIVER, LIVRE, LEVIR, ENNEAD, DREGS, RIVER, RERIG, DEADEN, ENDED,
+  SEDGE, GRIVET, TIGER, RIVET, DENSE, NEEDS, SANDER, SEDAN, SNEAD
+
+That exhausts the letter-extraction space under FP=22 as completely as it was already
+exhausted under FP=20. Fixing 20 vs 22 was never the blocker.
+
+### The 25-character hypothesis — tested and closed
+
+`maxlength="25"` on the input matches the phrase's 25 letters exactly, which is suggestive.
+Tested and rejected: the phrase concatenated without spaces, its full reversal, the 5x5
+square read column-wise (the natural reading of "Descend" as *read downward* — it even makes
+column 5 spell GAZED and row 4 ERODE), the column-wise boustrophedon, the reverse
+column-read, and **all 24 permutations of the four words concatenated** (each exactly 25
+characters).
+
+On reflection `maxlength` is weak evidence: the field also accepts digits, comma, period,
+question mark, hyphen, apostrophe, quote and space, which is a generic short-answer box
+rather than a 25-character spec. The phrase being a perfect 5x5 square is the more
+meaningful coincidence, and that geometry has been swept exhaustively.
+
+### MECHANISM CONFIRMED (by a Jane Street rep)
+
+> "That's the last step for getting the merch — basically the right side holes spell out a
+> word and that's the password for the merch. U use those numbers on the right column and
+> the sentence on the iPad screen to figure out the password. **But if u figured out all 6
+> puzzles ur done technically, so congrats!** (since the merch is no longer claimable)"
+
+So the punch-strip hole positions index the kiosk sentence and spell the password — and the
+six grids are the puzzle proper; the password was only ever a merch code.
+
+**The decisive consequence:** holes are read along the strip in order, so the password's
+letters occupy strictly increasing positions in the phrase. The password must therefore be a
+**subsequence** of `VoyagesNearingZeroDescend`. `subseq.py` enumerates every dictionary word
+that qualifies — exactly **503** of them. Given the true hole positions, the answer is a
+one-line lookup.
+
+Measured from the stacked photo: **no position shows wood through all six cards** (zero
+warm-toned pixels anywhere in the strip band), so the rule is *not* "holes open through the
+whole stack". What is visible through the top card's windows is cream printed squares on
+lower cards, which is the more likely marking — but the photo is too oblique to classify
+each unit position.
+
+Tested and rejected from the subsequence set: VOYAGER, VOYAGE, ASCEND, DESCEND, GODSEND,
+GENERIC, GEARING, SEARING, GENOESE, ARISEN, AEROSE, AGNIZE, SENESCE, VGG.
+
+### The decode is still open — what has been eliminated
+
+Roughly 110 candidate strings have been checked against the kiosk's own endpoint and
+rejected. More useful than the list is what the failures rule out:
+
+* **Indexing the phrase by the parameters is dead as an entire family.** Not just 1-based:
+  identity, reverse, 0-based, with-spaces, all eight dihedral transforms of the 5x5 square,
+  column-major, boustrophedon, spiral and diagonal fills, under any affine index map and any
+  parameter order, against a 370k-word list. Nothing yields a word.
+* **No ordering rule on the parameter letters can work either** — E, R, G, H, T, I has no
+  six-letter anagram at all. Its five-letter subsets (EIGHT, RIGHT, TIGER, THEIR, GIRTH,
+  GRITH) are now all tested and rejected.
+* Dropping the non-exporting red 9 and using only the five exporters gives two genuinely
+  elegant candidates — **DENSE** (0-based phrase indexing) and **GATHER** (E,R,G,H,T has
+  exactly one six-letter completion in English) — both rejected.
+* The whole thematic family is rejected: vanishing gradient, zero gradient, converge,
+  convergence, converges, gradient descent, global minimum, local minimum, saddle point,
+  loss landscape, parameter space, origin, nadir, underflow, landing, descent, altitude,
+  touchdown, and more.
+
+Since both letter-extraction routes are provably closed and the semantic route has been
+swept, the remaining possibility is that the phrase combines with something not yet read off
+the cards, or that the kiosk showed additional instruction text that was not captured.
 
 **Why this could not be finished from photographs.** The reading depends on classifying every
 unit position of a six-deep paper stack, and a single oblique phone photo cannot do that —
