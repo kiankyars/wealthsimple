@@ -187,6 +187,56 @@
             font-size: 0.9em;
             color: #1e40af;
         }
+
+        .resources {
+            margin-top: 32px;
+            padding-top: 28px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .resources h2 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1.4em;
+        }
+
+        .resources-intro {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .resource-list {
+            display: grid;
+            gap: 12px;
+            list-style: none;
+        }
+
+        .resource-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            background: #f9fafb;
+        }
+
+        .resource-item a {
+            color: #4f46e5;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .resource-item a:hover,
+        .resource-item a:focus {
+            text-decoration: underline;
+        }
+
+        .resource-meta {
+            color: #6b7280;
+            font-size: 0.85em;
+            line-height: 1.5;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -214,7 +264,7 @@
                 <p class="rate-note">Go to Wealthsimple exchange page (before confirming) to see the current rate. If left blank, we'll use the current market rate.</p>
             </div>
             
-            <button type="submit" id="calculateBtn">Calculate & Compare</button>
+            <button type="submit" id="calculateBtn">Calculate &amp; Compare</button>
         </form>
         
         <div id="loading" class="loading" style="display: none;">
@@ -222,6 +272,25 @@
         </div>
         
         <div id="results" class="results"></div>
+
+        <section class="resources" aria-labelledby="resources-heading">
+            <h2 id="resources-heading">Books and learning resources</h2>
+            <p class="resources-intro">A mix of downloadable open material and official publisher access pages.</p>
+            <ul class="resource-list">
+                <li class="resource-item">
+                    <a href="resources/progit.pdf">Download Pro Git, 2nd Edition (PDF)</a>
+                    <p class="resource-meta">By Scott Chacon and Ben Straub, published by Apress. Unmodified official version 2.1.448, licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" target="_blank" rel="noreferrer">CC BY-NC-SA 3.0</a>. Also available as the <a href="https://git-scm.com/book/en/v2" target="_blank" rel="noreferrer">official online edition</a>.</p>
+                </li>
+                <li class="resource-item">
+                    <a href="https://www.nand2tetris.org/book" target="_blank" rel="noreferrer">The Elements of Computing Systems (NAND to Tetris)</a>
+                    <p class="resource-meta">Official book page and companion resources.</p>
+                </li>
+                <li class="resource-item">
+                    <a href="https://www.oreilly.com/library/view/linux-pocket-guide/9781491927557/" target="_blank" rel="noreferrer">Linux Pocket Guide, 3rd Edition</a>
+                    <p class="resource-meta">Official O'Reilly access page.</p>
+                </li>
+            </ul>
+        </section>
     </div>
     
     <script>
@@ -450,4 +519,3 @@
     </script>
 </body>
 </html>
-
