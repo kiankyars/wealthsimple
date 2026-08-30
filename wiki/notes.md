@@ -11,7 +11,7 @@ These are the only syntheses from the original wiki that were not duplicated els
 - Keep raw transcripts with that corpus; promote only durable conclusions that affect later work.
 - Do not turn the shared agent context into a transcript mirror or episode-summary pile.
 
-Historical sources: Claude session `af7ba4a7-0af0-4d4b-9b04-961ccdcdca93`; `/Users/kian/obsidian/balados/dylan-patel.md` (not present at the 2026-08-05 audit).
+Historical sources: Claude session `af7ba4a7-0af0-4d4b-9b04-961ccdcdca93`; `/Users/kian/Library/Mobile Documents/com~apple~CloudDocs/obsidian/balados/dylan-patel.md` (not present at the 2026-08-05 audit).
 
 ## Dylan corpus location
 

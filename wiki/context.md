@@ -22,7 +22,7 @@
 ## Canonical homes
 
 - Project-specific facts and decisions: the project repository.
-- Human-authored daily notes, plans, and reflection: `/Users/kian/obsidian`.
+- Human-authored daily notes, plans, and reflection: `/Users/kian/Library/Mobile Documents/com~apple~CloudDocs/obsidian`.
 - Codex-specific learned history: `/Users/kian/.codex/memories`.
 - Raw research corpora and transcripts: their owning project directory.
 - Durable context needed by several agent products: this repository.
